@@ -1,54 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejemplo Bootstrap con Librerías en URL</title>
-
-    <!-- Bootstrap CSS desde una URL -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>SKILL-AI</title>
+    <!-- Agrega Bootstrap CSS desde una CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Agrega FontAwesome desde una CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- Agrega jQuery desde una CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
-
-<div class="container">
-    <h1 class="mt-5">Ejemplo de Bootstrap con Librerías en URL</h1>
-
-    <div class="alert alert-success" role="alert">
-        Esta es una alerta de Bootstrap cargada desde una URL.
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 text-left">
+                <h4>Enlaces de Interés en IA</h4>
+            </div>
+            <div class="col-md-4 text-center">
+                <button class="btn btn-success" onClick="window.location.reload();" title="Recargar Página"><i class="fas fa-sync-alt"></i>&nbsp;&nbsp;Recargar Página</button>
+            </div>
+            <div class="col-md-4 text-right">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" title="Agregar Enlace"><i class="fas fa-plus"></i>&nbsp;&nbsp;Agregar Enlace</button>
+            </div>
+        </div>
+        <br><br>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Categoría del Enlace</th>
+                    <th>Enlace</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody id="data">
+                <!-- Los datos de la hoja de cálculo se mostrarán aquí -->
+            </tbody>
+        </table>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <iframe
+                        src="https://docs.google.com/forms/d/e/1FAIpQLScWsxtFXCaSsXY24JQB_NQazQxDT-1_Je6XgRALf3Ilxd2Ceg/viewform?embedded=true"
+                        width="100%" height="800px" frameborder="0" marginheight="0" marginwidth="0">Cargando…</iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            // URL pública de la hoja de cálculo de Google Sheets
+            const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1w1QZoFvyNFgd2bk7ZuymS2b6IondbIRuN2sF8WSmELs/edit#gid=1221299872';
 
-    <button class="btn btn-primary">Botón de Bootstrap</button>
-</div>
+            $.get(spreadsheetUrl, function (data) {
+                // Busca los datos en la página web y muestra los datos en la tabla
+                const tableData = $(data).find("table").eq(0).find("tr");
 
-<!-- Bootstrap JS y Popper.js desde URLs (opcional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
-
-</body>
-</html>
-
-
-<script>
-    const SPREADSHEET_ID = '1XPEOe7PXhO-OdTMIYlrT7My1TFpNtoEEyCRCqanBWmU';
-
-    $(document).ready(function () {
-        $.ajax({
-            url: `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/A1:B2?key=TU_API_KEY`,
-            method: 'GET',
-            success: function (data) {
-                const values = data.values;
-
-                for (let row of values) {
-                    for (let cell of row) {
-                        $('body').append(cell + ' ');
+                // Itera a través de las filas y muestra los datos en la tabla
+                tableData.each(function (i, row) {
+                    if (i >= 2) {
+                        var categoria = $(row).find("td").eq(1).text();
+                        var enlace = $(row).find("td").eq(2).text();
+                        var descripcion = $(row).find("td").eq(3).text();
+                        if (categoria != '' && enlace != '' && descripcion != '') {
+                            enlace = "<a href='" + enlace + "' target='_blank' title='Hacer Click'><strong>" + enlace + "</strong></a>";
+                            $('#data').append(`<tr><td>${categoria}</td><td>${enlace}</td><td>${descripcion}</td></tr>`);
+                        }
                     }
-                    $('body').append('<br>');
-                }
-            },
-            error: function (error) {
-                console.error('Error al leer la hoja de cálculo: ', error);
-            }
+                });
+            });
         });
-    });
-</script>
+    </script>
+    <!-- Agrega Bootstrap JS (opcional) -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
